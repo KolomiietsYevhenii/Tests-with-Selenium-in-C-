@@ -1,40 +1,33 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using Xunit;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Xunit.Abstractions;
-
 
 namespace CreditCards.UITests
 {
     public class CreditCardWebAppShould
     {
-        const string HomeUrl = "https://dou.ua/";
-        const string JobsUrl = "https://jobs.dou.ua/";
-        const string HomeTitle = "Сообщество программистов | DOU";
+        const         string HomeUrl         = "https://dou.ua/";
+        const         string JobsUrl         = "https://jobs.dou.ua/";
+        const         string HomeTitle       = "Сообщество программистов | DOU";
         private const string RegisterCompany = "https://jobs.dou.ua/register/";
 
-
-
-        private readonly ITestOutputHelper output;
+        private readonly ITestOutputHelper _output;
 
         public CreditCardWebAppShould(ITestOutputHelper output)
         {
-            this.output = output;
+            _output = output;
         }
 
         [Fact]
         [Trait("Category", "Smoke")]
         public void LoadApplicationPage()
         {
-
             using (IWebDriver driver = new ChromeDriver())
             {
-
                 driver.Navigate().GoToUrl(HomeUrl);
 
                 //var emailInput = driver.FindElement(By.Id("username"));
@@ -57,17 +50,12 @@ namespace CreditCards.UITests
 
         [Fact]
         [Trait("Category", "Smoke")]
-
         public void ReloadHomePage()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
-
-
                 driver.Navigate().GoToUrl(HomeUrl);
-
                 DemoHelper.Pause();
-
                 driver.Navigate().Refresh();
 
                 Assert.Equal(HomeTitle, driver.Title);
@@ -77,15 +65,12 @@ namespace CreditCards.UITests
 
         [Fact]
         [Trait("Category", "Smoke")]
-
         public void ReloadHomePageOnBack()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
                 driver.Navigate().GoToUrl(HomeUrl);
-                IWebElement generationUserElement =
-                    driver.FindElement(By.ClassName("regcount"));
-                string initialUsers = generationUserElement.Text;
+                string initialUsers = driver.FindElement(By.ClassName("regcount")).Text;
 
                 DemoHelper.Pause();
                 driver.Navigate().GoToUrl(JobsUrl);
@@ -99,7 +84,6 @@ namespace CreditCards.UITests
                 string reloadedUsers = driver.FindElement(By.ClassName("regcount")).Text;
 
                 Assert.NotEqual(initialUsers, reloadedUsers);
-
             }
         }
 
@@ -123,31 +107,27 @@ namespace CreditCards.UITests
 
                 Assert.Equal(HomeTitle, driver.Title);
                 Assert.Equal(HomeUrl, driver.Url);
-
             }
         }
 
         [Fact]
         [Trait("Category", "Smoke")]
-
         public void slideArticlesByPartialLinkTextExplisitywait()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Navigating to {HomeUrl}");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Navigating to {HomeUrl}");
                 driver.Navigate().GoToUrl(HomeUrl);
 
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element using explisity wait");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element using explisity wait");
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
                 IWebElement applyLink =
                     wait.Until((d) => d.FindElement(By.PartialLinkText("Как оформить профиль на GitHub")));
 
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed = {applyLink.Enabled}");
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed = {applyLink.Enabled}");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
 
                 applyLink.Click();
-
-
 
                 //IWebElement fourthSliderArticleElement =
                 //    driver.FindElement(By.PartialLinkText("Как оформить профиль на GitHub"));
@@ -160,8 +140,7 @@ namespace CreditCards.UITests
 
         [Fact]
         [Trait("Category", "Smoke")]
-
-        public void jobsPageSearchButtonByClass()
+        public void JobsPageSearchButtonByClass()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
@@ -173,10 +152,12 @@ namespace CreditCards.UITests
                 //searchFieldElement.SendKeys("Luxoft");
 
 
-                ReadOnlyCollection<IWebElement> searchbuttonElements =
+                //TODO By.TagName("li") - really bad selector, try something more specific 
+                ReadOnlyCollection<IWebElement> searchButtonElements =
                     driver.FindElements(By.TagName("li"));
 
-                Assert.Equal("ГЛАВНАЯ", searchbuttonElements[1].Text);
+                //TODO wouldn't not work with 'uk' or 'en' localization 
+                Assert.Equal("ГЛАВНАЯ", searchButtonElements[1].Text); //searchButtonElements[1] will return exception if searchButtonElements is empty 
 
                 //searchbuttonElement.Click();
 
@@ -186,33 +167,30 @@ namespace CreditCards.UITests
         }
 
         [Fact]
-
-        public void homePageSearchByXpath()
+        public void HomePageSearchByXpath()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Setting implicit wait");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Setting implicit wait");
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3000);
 
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Navigating to {HomeUrl}");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Navigating to {HomeUrl}");
                 driver.Navigate().GoToUrl(HomeUrl);
 
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element");
+                //TODO:  By.ClassName("top) - more flexible and readable
+                IWebElement searchByTagElement =  driver.FindElement(By.XPath("//a [text() [contains(.,'Топ-50')]]"));
 
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element");
-                IWebElement searcByTagElement =
-                    driver.FindElement(By.XPath("//a [text() [contains(.,'Топ-50')]]"));
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed");
+                _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
+                searchByTagElement.Click();
 
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed");
-                output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
-                searcByTagElement.Click();
-
-
+                //Where is assert? 
             }
         }
 
         [Fact]
-
-        public void slideArticlesByPartialLinkTextPrebuildConduitions()
+        public void SlideArticlesByPartialLinkTextPrebuildConditions()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
@@ -222,13 +200,14 @@ namespace CreditCards.UITests
                 IWebElement applyLink =
                     wait.Until(ExpectedConditions.ElementToBeClickable(
                         By.PartialLinkText("Як і навіщо IT - фахівці розвивають")));
+
                 applyLink.Click();
 
+                //Where is assert? 
             }
         }
 
         [Fact]
-
         public void BeSubmittedWhenValid()
         {
             using (IWebDriver driver = new ChromeDriver())
@@ -248,9 +227,8 @@ namespace CreditCards.UITests
                 IWebElement logoUpload = driver.FindElement(By.Name("logo"));
                 logoUpload.SendKeys("D:\\Download\\logo.gif");
 
-
-                IWebElement employeesSelectElement = driver.FindElement(By.Id("id_employees"));
-                SelectElement IdEmployees = new SelectElement(employeesSelectElement);
+                IWebElement   employeesSelectElement = driver.FindElement(By.Id("id_employees"));
+                SelectElement IdEmployees            = new SelectElement(employeesSelectElement);
 
                 //Assert.Equal("0", IdEmployees.SelectedOption.Text);
                 //foreach (IWebElement option in IdEmployees.Options)
@@ -267,11 +245,12 @@ namespace CreditCards.UITests
                 driver.FindElement(By.CssSelector("input.g-btn-save.__long")); //.Click;
 
                 //DemoHelper.Pause();
+
+                //Where is assert? 
             }
         }
 
         [Fact]
-
         public void ResizingOfTheWindow()
         {
             using (IWebDriver driver = new ChromeDriver())
@@ -288,11 +267,10 @@ namespace CreditCards.UITests
                 DemoHelper.Pause();
                 driver.Manage().Window.Position = new System.Drawing.Point(50, 50);
                 DemoHelper.Pause();
-
             }
         }
-        [Fact]
 
+        [Fact]
         public void CssSelectorCitrus()
         {
             using (IWebDriver driver = new ChromeDriver())
@@ -315,7 +293,6 @@ namespace CreditCards.UITests
         }
 
         [Fact]
-
         public void HandlingPopup()
         {
             using (IWebDriver driver = new ChromeDriver())
@@ -330,7 +307,7 @@ namespace CreditCards.UITests
 
                 DemoHelper.Pause();
                 IAlert alert = driver.SwitchTo().Alert();
-                
+
                 Assert.Equal("Рад видеть Вас на моем сайте! Пошли дальше?", alert.Text);
                 alert.Accept();
             }

@@ -8,8 +8,7 @@ namespace CreditCards.UITests
 {
     public class Guidgenerator
     {
-        const string HomeUrl = "https://www.guidgenerator.com/";
-
+        const string HomeUrl   = "https://www.guidgenerator.com/";
         const string HomeTitle = "Online GUID Generator";
 
         [Fact]
@@ -19,21 +18,18 @@ namespace CreditCards.UITests
             using (IWebDriver driver = new ChromeDriver())
             {
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3000);
-                    driver.Manage().Window.Maximize();
+                driver.Manage().Window.Maximize();
                 driver.Navigate().GoToUrl(HomeUrl);
 
                 IWebElement clickOnGuidElement =
                     driver.FindElement(By.Id("btnGenerate"));
 
                 clickOnGuidElement.Click();
-
-
                 IWebElement generationGuidElement = driver.FindElement(By.Id("txtResults"));
 
                 string initialGuid = generationGuidElement.Text;
 
                 driver.Navigate().Refresh();
-
 
                 Assert.Equal(HomeTitle, driver.Title);
                 //Assert.Equal(HomeUrl, driver.Url);
@@ -41,11 +37,7 @@ namespace CreditCards.UITests
                 string reloadedGuid = driver.FindElement(By.Id("txtResults")).Text;
 
                 Assert.NotEqual(initialGuid, reloadedGuid);
-
-
-
             }
         }
-
     }
 }
