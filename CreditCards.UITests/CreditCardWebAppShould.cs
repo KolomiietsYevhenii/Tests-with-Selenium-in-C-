@@ -291,6 +291,28 @@ namespace CreditCards.UITests
 
             }
         }
+        [Fact]
+
+        public void CssSelectorCitrus()
+        {
+            using (IWebDriver driver = new ChromeDriver())
+            {
+                driver.Navigate().GoToUrl("https://www.citrus.ua/");
+
+                driver.FindElement(
+                    By.CssSelector("div.auth a.link-to")).Click();
+                DemoHelper.Pause();
+
+                //WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+                //IAlert alert = wait.Until(ExpectedConditions.AlertIsPresent());
+
+                //DemoHelper.Pause();
+                //IAlert alert = driver.SwitchTo().Alert();
+
+                //Assert.Equal("Рад видеть Вас на моем сайте! Пошли дальше?", alert.Text);
+                //alert.Accept();
+            }
+        }
 
         [Fact]
 
@@ -301,7 +323,7 @@ namespace CreditCards.UITests
                 driver.Navigate().GoToUrl("https://htmlweb.ru/java/js1.php");
 
                 //driver.FindElement(
-                //By.CssSelector(".auth .link-to")).Click();
+                //By.CssSelector("a.link-to")).Click();
 
                 //WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
                 //IAlert alert = wait.Until(ExpectedConditions.AlertIsPresent());
