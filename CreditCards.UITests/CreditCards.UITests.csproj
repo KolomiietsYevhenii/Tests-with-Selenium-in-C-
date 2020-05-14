@@ -73,6 +73,7 @@
     <Compile Include="DemoHelper.cs" />
     <Compile Include="Guidgenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScreenshotPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

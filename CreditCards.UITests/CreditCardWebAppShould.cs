@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 using Xunit;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -112,7 +113,7 @@ namespace CreditCards.UITests
 
         [Fact]
         [Trait("Category", "Smoke")]
-        public void slideArticlesByPartialLinkTextExplisitywait()
+        public void SlideArticlesByPartialLinkTextExplisityWait()
         {
             using (IWebDriver driver = new ChromeDriver())
             {
@@ -180,12 +181,13 @@ namespace CreditCards.UITests
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element");
                 //TODO:  By.ClassName("top) - more flexible and readable
                 IWebElement searchByTagElement =  driver.FindElement(By.XPath("//a [text() [contains(.,'Топ-50')]]"));
-
+                
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed");
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
                 searchByTagElement.Click();
 
                 //Where is assert? 
+                Assert.Equal("https://dou.ua/lenta/articles/top-50-jan-2020/?from=doufp", driver.Url);
             }
         }
 
@@ -199,11 +201,12 @@ namespace CreditCards.UITests
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(4000));
                 IWebElement applyLink =
                     wait.Until(ExpectedConditions.ElementToBeClickable(
-                        By.PartialLinkText("Як і навіщо IT - фахівці розвивають")));
+                        By.PartialLinkText("IT-фахівці розвивають українськомовний YouTube")));
 
                 applyLink.Click();
 
                 //Where is assert? 
+                Assert.Equal("https://dou.ua/lenta/articles/how-it-specialists-develop-ukrainian-youtube/", driver.Url);
             }
         }
 
@@ -228,7 +231,7 @@ namespace CreditCards.UITests
                 logoUpload.SendKeys("D:\\Download\\logo.gif");
 
                 IWebElement   employeesSelectElement = driver.FindElement(By.Id("id_employees"));
-                SelectElement IdEmployees            = new SelectElement(employeesSelectElement);
+                SelectElement idEmployees            = new SelectElement(employeesSelectElement);
 
                 //Assert.Equal("0", IdEmployees.SelectedOption.Text);
                 //foreach (IWebElement option in IdEmployees.Options)
@@ -236,13 +239,13 @@ namespace CreditCards.UITests
                 //    output.WriteLine($"Value: {option.GetAttribute("value")} Text: {option.Text}");
                 //}
 
-                IdEmployees.SelectByValue("7");
+                idEmployees.SelectByValue("7");
 
-                IdEmployees.SelectByText("800—1500");
+                idEmployees.SelectByText("800—1500");
 
-                IdEmployees.SelectByIndex(1);
+                idEmployees.SelectByIndex(1);
 
-                driver.FindElement(By.CssSelector("input.g-btn-save.__long")); //.Click;
+                driver.FindElement(By.ClassName("g-btn-save")); //.Click;
 
                 //DemoHelper.Pause();
 
