@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Xunit;
 using OpenQA.Selenium;
@@ -152,6 +153,8 @@ namespace CreditCards.UITests
                 //    driver.FindElement(By.Name("search"));
                 //searchFieldElement.SendKeys("Luxoft");
 
+                IWebElement homeButtonWithLinqByText = driver.FindElements(By.CssSelector(".b-head ul > li"))
+                    .FirstOrDefault(x => x.Text == "ГЛАВНАЯ");
 
                 //TODO By.TagName("li") - really bad selector, try something more specific 
                 ReadOnlyCollection<IWebElement> searchButtonElements =
