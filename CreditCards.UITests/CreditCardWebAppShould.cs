@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Xunit;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.UI;
 using Xunit.Abstractions;
 
@@ -56,12 +56,22 @@ namespace CreditCards.UITests
         {
             using (IWebDriver driver = new ChromeDriver())
             {
-                driver.Navigate().GoToUrl(HomeUrl);
-                DemoHelper.Pause();
-                driver.Navigate().Refresh();
+                driver.Navigate().GoToUrl(JobsUrl);
+                
+                //driver.Navigate().Refresh();
 
-                Assert.Equal(HomeTitle, driver.Title);
-                Assert.Equal(HomeUrl, driver.Url);
+               // Assert.Equal(HomeTitle, driver.Title);
+                Assert.Equal(JobsUrl, driver.Url);
+
+                driver.MakeScreenshot("ReloadHomePage");
+                //new ScreenshotPage(driver).ScreenshotOfPage();
+                //ScreenshotPage s = new ScreenshotPage();
+                
+
+
+
+
+
             }
         }
 
@@ -156,12 +166,14 @@ namespace CreditCards.UITests
                 IWebElement homeButtonWithLinqByText = driver.FindElements(By.CssSelector(".b-head ul > li"))
                     .FirstOrDefault(x => x.Text == "ГЛАВНАЯ");
 
+
+
                 //TODO By.TagName("li") - really bad selector, try something more specific 
                 ReadOnlyCollection<IWebElement> searchButtonElements =
                     driver.FindElements(By.TagName("li"));
 
                 //TODO wouldn't not work with 'uk' or 'en' localization 
-                Assert.Equal("ГЛАВНАЯ", searchButtonElements[1].Text); //searchButtonElements[1] will return exception if searchButtonElements is empty 
+                Assert.Equal("ГЛАВНАЯ", homeButtonWithLinqByText?.Text); //searchButtonElements[1] will return exception if searchButtonElements is empty 
 
                 //searchbuttonElement.Click();
 
