@@ -1,20 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using CreditCards.UITests.PageObjectModels;
 using Xunit;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.UI;
 using Xunit.Abstractions;
+using OpenQA.Selenium.Interactions;
+
 
 namespace CreditCards.UITests
 {
     public class CreditCardWebAppShould
     {
-        const         string HomeUrl         = "https://dou.ua/";
-        const         string JobsUrl         = "https://jobs.dou.ua/";
-        const         string HomeTitle       = "Сообщество программистов | DOU";
+        const string HomeUrl = "https://dou.ua/";
+        public const string JobsUrl = "https://jobs.dou.ua/";
+        const string HomeTitle = "Сообщество программистов | DOU";
         private const string RegisterCompany = "https://jobs.dou.ua/register/";
 
         private readonly ITestOutputHelper _output;
@@ -57,47 +61,18 @@ namespace CreditCards.UITests
             using (IWebDriver driver = new ChromeDriver())
             {
                 driver.Navigate().GoToUrl(JobsUrl);
-                
+
                 //driver.Navigate().Refresh();
 
-               // Assert.Equal(HomeTitle, driver.Title);
+                // Assert.Equal(HomeTitle, driver.Title);
                 Assert.Equal(JobsUrl, driver.Url);
 
                 driver.MakeScreenshot("ReloadHomePage");
                 //new ScreenshotPage(driver).ScreenshotOfPage();
                 //ScreenshotPage s = new ScreenshotPage();
-                
-
-
-
-
-
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        public void ReloadHomePageOnBack()
-        {
-            using (IWebDriver driver = new ChromeDriver())
-            {
-                driver.Navigate().GoToUrl(HomeUrl);
-                string initialUsers = driver.FindElement(By.ClassName("regcount")).Text;
-
-                DemoHelper.Pause();
-                driver.Navigate().GoToUrl(JobsUrl);
-                DemoHelper.Pause();
-                driver.Navigate().Back();
-                DemoHelper.Pause();
-
-                Assert.Equal(HomeTitle, driver.Title);
-                Assert.Equal(HomeUrl, driver.Url);
-
-                string reloadedUsers = driver.FindElement(By.ClassName("regcount")).Text;
-
-                Assert.NotEqual(initialUsers, reloadedUsers);
-            }
-        }
 
         [Fact]
         [Trait("Category", "Smoke")]
@@ -173,7 +148,9 @@ namespace CreditCards.UITests
                     driver.FindElements(By.TagName("li"));
 
                 //TODO wouldn't not work with 'uk' or 'en' localization 
-                Assert.Equal("ГЛАВНАЯ", homeButtonWithLinqByText?.Text); //searchButtonElements[1] will return exception if searchButtonElements is empty 
+                Assert.Equal("ГЛАВНАЯ",
+                    homeButtonWithLinqByText
+                        ?.Text); //searchButtonElements[1] will return exception if searchButtonElements is empty 
 
                 //searchbuttonElement.Click();
 
@@ -195,8 +172,8 @@ namespace CreditCards.UITests
 
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Finding element");
                 //TODO:  By.ClassName("top) - more flexible and readable
-                IWebElement searchByTagElement =  driver.FindElement(By.XPath("//a [text() [contains(.,'Топ-50')]]"));
-                
+                IWebElement searchByTagElement = driver.FindElement(By.XPath("//a [text() [contains(.,'Топ-50')]]"));
+
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Found element displayed");
                 _output.WriteLine($"{DateTime.Now.ToLongTimeString()} Clicking element");
                 searchByTagElement.Click();
@@ -245,8 +222,8 @@ namespace CreditCards.UITests
                 IWebElement logoUpload = driver.FindElement(By.Name("logo"));
                 logoUpload.SendKeys("D:\\Download\\logo.gif");
 
-                IWebElement   employeesSelectElement = driver.FindElement(By.Id("id_employees"));
-                SelectElement idEmployees            = new SelectElement(employeesSelectElement);
+                IWebElement employeesSelectElement = driver.FindElement(By.Id("id_employees"));
+                SelectElement idEmployees = new SelectElement(employeesSelectElement);
 
                 //Assert.Equal("0", IdEmployees.SelectedOption.Text);
                 //foreach (IWebElement option in IdEmployees.Options)
@@ -273,18 +250,8 @@ namespace CreditCards.UITests
         {
             using (IWebDriver driver = new ChromeDriver())
             {
-                driver.Navigate().GoToUrl(HomeUrl);
-
-                driver.Manage().Window.Maximize();
-                DemoHelper.Pause();
-                driver.Manage().Window.Minimize();
-                DemoHelper.Pause();
-                driver.Manage().Window.Size = new System.Drawing.Size(200, 400);
-                DemoHelper.Pause();
-                driver.Manage().Window.Position = new System.Drawing.Point(1, 1);
-                DemoHelper.Pause();
-                driver.Manage().Window.Position = new System.Drawing.Point(50, 50);
-                DemoHelper.Pause();
+                var jobPage = new JobPage(driver);
+                jobPage.NavigateTo();
             }
         }
 
@@ -321,13 +288,51 @@ namespace CreditCards.UITests
                 //By.CssSelector("a.link-to")).Click();
 
                 //WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
-                //IAlert alert = wait.Until(ExpectedConditions.AlertIsPresent());
+                //IAlert alert = wait.Until(ExpectedConditions.AlertIsPresent())
 
                 DemoHelper.Pause();
                 IAlert alert = driver.SwitchTo().Alert();
 
                 Assert.Equal("Рад видеть Вас на моем сайте! Пошли дальше?", alert.Text);
                 alert.Accept();
+            }
+        }
+
+        [Fact]
+        public void InteractionsWithActions()
+        {
+            using (IWebDriver driver = new ChromeDriver())
+            {
+                driver.Navigate().GoToUrl(JobsUrl);
+                driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
+                IWebElement top50Element = driver.FindElement(By.ClassName("smi"));
+
+                Actions actions = new Actions(driver);
+                actions.MoveToElement(top50Element);
+                actions.Click();
+                actions.Perform();
+
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+
+        public void ReloadHomePageOnBack()                                  // Refactoring
+        {
+            using (IWebDriver driver = new ChromeDriver())
+            {
+                var jobPage = new JobPage(driver);
+                jobPage.NavigateTo();
+
+                string initialUsers = jobPage.GenerationUsers;
+
+                driver.Navigate().GoToUrl(HomeUrl);
+                driver.Navigate().Back();
+                jobPage.EnsurePageLoaded();
+
+                string reloadedUsers = jobPage.GenerationUsers;
+                Assert.NotEqual(initialUsers, reloadedUsers);
             }
         }
     }
