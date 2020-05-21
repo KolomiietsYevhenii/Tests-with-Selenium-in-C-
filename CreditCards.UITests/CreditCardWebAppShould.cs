@@ -325,13 +325,13 @@ namespace CreditCards.UITests
                 var jobPage = new JobPage(driver);
                 jobPage.NavigateTo();
 
-                string initialUsers = jobPage.GenerationUsers;
+                string initialUsers = jobPage.UsersCount;
 
                 driver.Navigate().GoToUrl(HomeUrl);
                 driver.Navigate().Back();
                 jobPage.EnsurePageLoaded();
 
-                string reloadedUsers = jobPage.GenerationUsers;
+                string reloadedUsers = jobPage.UsersCount;
                 Assert.NotEqual(initialUsers, reloadedUsers);
             }
         }

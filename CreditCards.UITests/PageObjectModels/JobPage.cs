@@ -1,58 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace CreditCards.UITests.PageObjectModels
 {
     public class JobPage
     {
-        private const string PageUrl = "https://jobs.dou.ua/";
-        const string HomeUrl = "https://dou.ua/";
-        private const string PageTitle = "Вакансии | DOU";
-        private readonly IWebDriver Driver;
+        private const    string     PageUrl   = "https://jobs.dou.ua/";
+        private const    string     PageTitle = "Вакансии | DOU";
+        private readonly IWebDriver _driver;
 
         public JobPage(IWebDriver driver)
         {
-            Driver = driver;
+            _driver = driver;
         }
 
-        public ReadOnlyCollection<IWebElement> LiElemnents => Driver.FindElements(By.CssSelector(".sub li"));
+        public ReadOnlyCollection<IWebElement> HeaderLiElements => _driver.FindElements(By.CssSelector(".sub li"));
+        public IWebElement JobsTabElement => _driver.FindElements(By.CssSelector(".sub li")).FirstOrDefault();
+        public IWebElement TrendsTabElement => _driver.FindElements(By.CssSelector(".sub li")).FirstOrDefault();
 
-        public  string GenerationUsers => Driver.FindElement(By.CssSelector("\\span.regcount")).Text;
+        public  string UsersCount => _driver.FindElement(By.CssSelector("\\span.regcount")).Text;
 
-        public void ClickSearchFooterLink() => Driver.FindElement(By.PartialLinkText("Джинне")).Click();
+        public void ClickSearchFooterLink()
+        {
+            _driver.FindElement(By.PartialLinkText("Джинне")).Click();
+        }
 
         //public void SelectCategory() => Driver.FindElement(By.CssSelector("select"));
 
-        public void FillJobSearchField() => Driver.FindElement(By.CssSelector("input.job")).SendKeys("Luxoft");
+        public void FillJobSearchField(string inputValue)
+        {
+            _driver.FindElement(By.CssSelector("input.job")).SendKeys(inputValue);
+        }
 
-        public void ClickJobSearchButton() => Driver.FindElement(By.CssSelector("input.btn-search")).Click();
+        public void ClickJobSearchButton()
+        {
+            _driver.FindElement(By.CssSelector("input.btn-search")).Click();
+        }
 
         public void NavigateTo()
         {
-            Driver.Navigate().GoToUrl(PageUrl);
-            Driver.Manage().Window.Maximize();
-            EnsurePageLoaded();
+            _driver.Navigate().GoToUrl(PageUrl);
         }
 
-        public void NavigateToHomeUrl()
+        public void NavigateToTab(IWebElement tab)
         {
-            Driver.Navigate().GoToUrl(HomeUrl);
-            Driver.Manage().Window.Maximize();
+           tab.Click();
         }
 
         public void EnsurePageLoaded()
         {
-            bool pageHasLoaded = (Driver.Url == PageUrl) && (Driver.Title == PageTitle);
+            bool pageHasLoaded = (_driver.Url == PageUrl) && (_driver.Title == PageTitle);
             if (!pageHasLoaded)
             {
-                throw new Exception($"Failed to load page. Page URL = '{Driver.Url}' Page Source: \r\n {Driver.PageSource}");
+                throw new Exception($"Failed to load page. Page URL = '{_driver.Url}' Page Source: \r\n {_driver.PageSource}");
             }
+        }
+
+        public void SelectJobCategory(string value)
+        {
+            var selectJobElement = _driver.FindElement(By.Name("education"));
+            //create select element object 
+            var selectElement = new SelectElement(selectJobElement);
+
+            //select by value
+            //selectElement.SelectByValue("Jr.High");
+            // select by text
+            selectElement.SelectByText(value);
         }
     }
 }

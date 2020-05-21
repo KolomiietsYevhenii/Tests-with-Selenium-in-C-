@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="CreditCardWebAppShould.cs" />
     <Compile Include="DemoHelper.cs" />
+    <Compile Include="PageObjectModels\HomePage.cs" />
     <Compile Include="PageObjectTests.cs" />
     <Compile Include="Guidgenerator.cs" />
     <Compile Include="PageObjectModels\JobPage.cs" />

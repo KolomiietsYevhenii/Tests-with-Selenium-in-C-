@@ -21,7 +21,11 @@ namespace CreditCards.UITests
             screenshots.SaveAsFile($"{fileName}.png", ScreenshotImageFormat.Png);
 
             FileInfo file = new FileInfo($"{fileName}.png");
-            
+        }
+
+        public static void MaximizeWindow(this IWebDriver driver)
+        {
+            driver.Manage().Window.Maximize();
         }
     }
 }

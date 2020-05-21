@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CreditCards.UITests.PageObjectModels;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -22,7 +17,7 @@ namespace CreditCards.UITests
                 var jobPage = new JobPage(driver);
                 jobPage.NavigateTo();
 
-                ReadOnlyCollection<IWebElement> informationsElemnents = jobPage.LiElemnents;
+                ReadOnlyCollection<IWebElement> informationsElemnents = jobPage.HeaderLiElements;
 
                 Assert.Equal("Вакансии", informationsElemnents[0].Text);
                 Assert.Equal("Тренды", informationsElemnents[1].Text);
@@ -40,6 +35,8 @@ namespace CreditCards.UITests
             {
                 var jobPage = new JobPage(driver);
                 jobPage.NavigateTo();
+                jobPage.NavigateToTab(jobPage.JobsTabElement);
+                jobPage.NavigateToTab(jobPage.TrendsTabElement);
 
                 jobPage.ClickSearchFooterLink();
 
@@ -58,15 +55,17 @@ namespace CreditCards.UITests
             using (IWebDriver driver = new ChromeDriver())
             {
                 var jobPage = new JobPage(driver);
+                var homepage = new HomePage(driver);
+
+                driver.MaximizeWindow();
                 jobPage.NavigateTo();
-
-                string initialUsers = jobPage.GenerationUsers;
-
-                jobPage.NavigateToHomeUrl();
+                string initialUsersCount = jobPage.UsersCount;
+                
+                homepage.NavigateTo();
                 driver.Navigate().Back();
 
-                string reloadedUsers = jobPage.GenerationUsers;
-                Assert.NotEqual(initialUsers, reloadedUsers);
+                string reloadedUsers = jobPage.UsersCount;
+                Assert.NotEqual(initialUsersCount, reloadedUsers);
             }
         }
 
@@ -78,8 +77,8 @@ namespace CreditCards.UITests
                 var jobPage = new JobPage(driver);
                 jobPage.NavigateTo();
 
-               // jobPage.SelectCategory();
-                jobPage.FillJobSearchField();
+                jobPage.SelectJobCategory("QA");
+                jobPage.FillJobSearchField("Luxoft");
                 jobPage.ClickJobSearchButton();
 
                 Assert.Contains("Luxoft", driver.FindElement(By.CssSelector("a.company")).Text);
